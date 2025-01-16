@@ -374,18 +374,44 @@ function PanelLV3({ isPanel1Completed }) {
 function App() {
 
   const [isPanel1Completed, setIsPanel1Completed] = useState(false);
+  const [previewText, setPreviewText] = useState('');
+  const [type, setType] = useState(null);
+  const [order, setOrder] = useState(null);
+  const [connection, setConnection] = useState(null);
 
   const handleSelectionChange = (panel, value) => {
-    if (panel === 'type' && value) {
+    if (panel === 'type') {
+      setType(value);
+    } else if (panel === 'order') {
+      setOrder(value);
+    } else if (panel === 'connection') {
+      setConnection(value);
+    }
+
+    // Check if all selections are made
+    if (type && order && connection) {
       setIsPanel1Completed(true);
-      if (panel === 'order' && value) {
-        setIsPanel1Completed(true);
-        if (panel === 'connection' && value) {
-          setIsPanel1Completed(true);
-        }
-      }
     }
   };
+
+  const updatePreviewText = () => {
+    if (type === 'feed-based' && connection === 'network') {
+      setPreviewText('1');
+    } else if (type === 'feed-based' && connection === 'group') {
+      setPreviewText('2');
+    } else if (type === 'channel-based' && connection === 'network') {
+      setPreviewText('3');
+    } else if (type === 'channel-based' && connection === 'group') {
+      setPreviewText('4');
+    } else {
+      setPreviewText('');
+    }
+  };
+
+  // Update preview text whenever type, order, or connection change
+  React.useEffect(() => {
+    updatePreviewText();
+  }, [type, order, connection]);
 
   return (
     <div className="app-container">
@@ -407,6 +433,7 @@ function App() {
       <div className="right-sidebar">
           <div className="preview">
             <h3>Preview Option</h3>
+            <p>{previewText}</p>
           </div>
           <div className="new-component">
             <h3>New Component</h3>
