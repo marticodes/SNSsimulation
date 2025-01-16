@@ -1,0 +1,155 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: black;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+}
+
+.app-container {
+  padding: 40px 100px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Main Content Layout */
+.main-content {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr; /* Panels take 3 parts, right column (preview + new component) takes 1 part */
+  gap: 20px;
+  width: 100%;
+}
+
+
+.panels {
+  display: grid;
+  grid-template-columns: 25% 30% 40%;
+  gap: 20px;
+}
+
+.panel {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.panel h3 {
+  margin-bottom: 10px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  justify-content: space-between; /* Adjust space if needed */
+}
+
+.title-and-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between title and icon */
+}
+
+.info-icon {
+  position: relative; /* For tooltip positioning */
+  cursor: pointer; /* Pointer to indicate interactivity */
+}
+
+.info-icon i {
+ color: #d7e8ff;
+}
+
+
+.info-icon .info-tooltip {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 20px;
+  left: 0;
+  background-color: #000; /* Tooltip background color */
+  color: #fff; /* Tooltip text color */
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.info-icon:hover .info-tooltip {
+  display: block; /* Show tooltip on hover */
+}
+
+.options {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin: 5px 0;
+}
+
+.right-sidebar {
+  display: flex;
+  flex-direction: column; /* Stack the preview and new component vertically */
+  gap: 20px;
+}
+
+/* Preview Section */
+.preview {
+  flex: 1;
+  background-color: #c8f7c5;
+  border-radius: 8px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* New Component Section */
+.new-component {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Simulate Button */
+.button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #7F9EBA;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 30%;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
