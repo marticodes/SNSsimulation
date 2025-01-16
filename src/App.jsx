@@ -114,7 +114,7 @@ function PanelLV1({ onSelectionChange }) {
 
 function PanelLV2({ isPanel1Completed }) {
   return (
-    <div className="panel">
+    <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`} style={{ position: 'relative' }}>
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV2</h3>
@@ -244,13 +244,19 @@ function PanelLV2({ isPanel1Completed }) {
         </label>
       </div>
 
+      {!isPanel1Completed && (
+        <div className="tooltip">
+          <span>Please complete LV1 before proceeding to LV2.</span>
+        </div>
+      )}
+
     </div>
   );
 }
 
 function PanelLV3({ isPanel1Completed }) {
   return (
-    <div className="panel">
+    <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`} style={{ position: 'relative' }}>
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV3</h3>
@@ -354,6 +360,12 @@ function PanelLV3({ isPanel1Completed }) {
           <input type="radio" name="communityFeature" disabled={!isPanel1Completed}/> Closed groups (e.g., Facebook)
         </label>
       </div>
+
+      {!isPanel1Completed && (
+        <div className="tooltip">
+          <span>Please complete LV1 before proceeding to LV3.</span>
+        </div>
+      )}
 
     </div>
   );
