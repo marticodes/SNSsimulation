@@ -128,7 +128,7 @@ function PanelLV2({ isPanel1Completed }) {
           </div>
         </div>
       </div>
-
+    <div className="lv2-options-container">
       <div className="options">
         <h3>Content</h3>
         <label>
@@ -172,9 +172,8 @@ function PanelLV2({ isPanel1Completed }) {
         </label>
       </div>
 
-      <h3>Account</h3>
-
       <div className="options">
+      <h3>Account</h3>
         <strong>Types</strong>
         <label>
           <input type="checkbox" disabled={!isPanel1Completed}/> Public
@@ -200,9 +199,8 @@ function PanelLV2({ isPanel1Completed }) {
         </label>
       </div>
 
-      <h3>Messaging</h3>
-
       <div className="options">
+      <h3>Messaging</h3>
         <strong>Types</strong>
         <label>
           <input type="checkbox" disabled={!isPanel1Completed}/> Private(1:1)
@@ -247,6 +245,7 @@ function PanelLV2({ isPanel1Completed }) {
           <input type="checkbox" disabled={!isPanel1Completed}/> Mutual connections
         </label>
       </div>
+      </div>
 
       {!isPanel1Completed && (
         <div className="tooltip">
@@ -271,9 +270,8 @@ function PanelLV3({ isPanel1Completed }) {
         </div>
       </div>
 
-      <h3>Ephemeral content</h3>
-
       <div className="options">
+        <h3>Ephemeral content</h3>
         <strong>Content Type</strong>
         <label>
           <input type="checkbox" disabled={!isPanel1Completed}/> Text
@@ -313,9 +311,8 @@ function PanelLV3({ isPanel1Completed }) {
         </label>
       </div>
 
-      <h3>Content discovery</h3>
-
       <div className="options">
+      <h3>Content discovery</h3>
         <strong>Recommendations</strong>
         <label>
           <input type="checkbox" disabled={!isPanel1Completed}/> Topic-based suggestion
