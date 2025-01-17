@@ -118,7 +118,7 @@ function PanelLV1({ onSelectionChange }) {
 
 function PanelLV2({ isPanel1Completed }) {
   return (
-    <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`} style={{ position: 'relative' }}>
+    <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`}>
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV2</h3>
@@ -260,7 +260,7 @@ function PanelLV2({ isPanel1Completed }) {
 
 function PanelLV3({ isPanel1Completed }) {
   return (
-    <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`} style={{ position: 'relative' }}>
+    <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`}>
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV3</h3>
@@ -428,10 +428,16 @@ function App() {
       <div className="main-content">
         {/* Panels */}
         <div className="panels">
-        <PanelLV1 onSelectionChange={handleSelectionChange} />
+        <div className="panel panel-lv1">
+          <PanelLV1 onSelectionChange={handleSelectionChange} />
+        </div>
+        <div className="panel panel-lv2">
           <PanelLV2 isPanel1Completed={isPanel1Completed} />
+        </div>
+        <div className="panel panel-lv3">
           <PanelLV3 isPanel1Completed={isPanel1Completed} />
         </div>
+      </div>
 
       <div className="right-sidebar">
           <div className="preview">

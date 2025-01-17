@@ -40,11 +40,30 @@ h3 {
 
 .panels {
   display: grid;
-  grid-template-columns: 25% 30% 40%;
-  gap: 20px;
+  grid-template-areas: 
+    "PanelLV1 PanelLV2 PanelLV2"
+    "PanelLV3 PanelLV3 PanelLV3";
+  grid-template-columns: 0.7fr 1fr 1fr; /* Define three equal columns */
+  gap: 10px;
+  height: 100vh;
+  padding: 10px;
 }
 
+.panel-lv1 {
+  grid-area: PanelLV1; /* Map to PanelLV1 */
+}
+
+.panel-lv2 {
+  grid-area: PanelLV2; /* Map to PanelLV2 */
+}
+
+.panel-lv3 {
+  grid-area: PanelLV3; /* Map to PanelLV3 */
+}
+
+
 .panel {
+  flex: auto;
   padding: 15px;
   border-radius: 8px;
   background-color: #ffffff;
