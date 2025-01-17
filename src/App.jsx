@@ -258,7 +258,7 @@ function PanelLV2({ isPanel1Completed }) {
   );
 }
 
-function PanelLV3({ isPanel1Completed }) {
+function PanelLV3({ isPanel1Completed, selectedConnection }) {
   return (
     <div className={`panel ${!isPanel1Completed ? 'disabled' : ''}`} style={{ position: 'relative' }}>
       <div className="panel-header">
@@ -356,12 +356,12 @@ function PanelLV3({ isPanel1Completed }) {
       </div>
 
       <div className="options">
-        <h3>Community feature (for network connection type)</h3>
+        <h3>Community feature</h3>
         <label>
-          <input type="radio" name="communityFeature" disabled={!isPanel1Completed}/> Open groups (e.g., Instagram)
+          <input type="radio" name="communityFeature" disabled={selectedConnection === 'group' || !isPanel1Completed}/> Open groups (e.g., Instagram)
         </label>
         <label>
-          <input type="radio" name="communityFeature" disabled={!isPanel1Completed}/> Closed groups (e.g., Facebook)
+          <input type="radio" name="communityFeature" disabled={selectedConnection === 'group' || !isPanel1Completed}/> Closed groups (e.g., Facebook)
         </label>
       </div>
 

@@ -9,7 +9,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .app-container {
@@ -63,6 +63,13 @@ h3 {
 .options {
   line-height: 1.2;
 }
+
+.options input:disabled {
+  opacity: 0.1;  /* Reduce opacity when disabled */
+  cursor: not-allowed;  /* Change cursor to indicate it's not clickable */
+  font-weight: lighter;
+}
+
 
 .title-and-icon {
   display: flex;
