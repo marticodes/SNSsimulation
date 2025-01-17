@@ -32,7 +32,7 @@ h3 {
 /* Main Content Layout */
 .main-content {
   display: grid;
-  grid-template-columns: 1.5fr 1fr; /* Panels take 3 parts, right column (preview + new component) takes 1 part */
+  grid-template-columns: 1.8fr 1fr; /* Panels take 3 parts, right column (preview + new component) takes 1 part */
   gap: 20px;
   width: 100%;
 }
