@@ -25,6 +25,10 @@ body {
   font-size: 34px;
 }
 
+h3 {
+  margin-bottom: 8px; /* Less space below headers */
+}
+
 /* Main Content Layout */
 .main-content {
   display: grid;
@@ -47,7 +51,7 @@ body {
 }
 
 .panel h3 {
-  margin-bottom: 10px;
+  margin-bottom: 3px;
 }
 
 .panel-header {
@@ -56,10 +60,14 @@ body {
   justify-content: space-between; 
 }
 
+.options {
+  line-height: 1.2;
+}
+
 .title-and-icon {
   display: flex;
   align-items: center;
-  gap: 8px; 
+  gap: 5px; 
 }
 
 .info-icon {
@@ -113,34 +121,61 @@ label {
   padding: 20px;
 }
 
+.preview h3 {
+  font-size: 1.2em;
+  margin-bottom: 1px;
+  margin-top: 0%;
+}
+
 .preview img {
-  max-width: 100%;
-  height: auto;
+  width: 100%; /* Ensure the image takes full width */
+  max-width: 500px; /* Set a max size */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 8px;
+  margin: 10px 0;
 }
 
 
 /* New Component Section */
 .new-component {
-  flex: 1;
   border: 1px solid #ddd;
   padding: 15px;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
 
-textarea {
-  width: 100%;
-  height: 80px;
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 8px;
+.new-component textarea {
+  background-color: white;
+  color: black;
+  width: 96%;
+  height: 60px; /* Adjust height as needed */
   border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.9em;
+  resize: none; /* Disable resizing */
 }
 
-/* Simulate Button */
-.button-container {
+.simulate-button {
   text-align: center;
-  margin-top: 20px;
+}
+
+.simulate-button button {
+  background-color: #678dbf; /* Blue color */
+  color: white;
+  padding: 10px 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  height: 50px;
+}
+
+.simulate-button button:hover {
+  background-color: #567aa3; /* Darker blue on hover */
 }
 
 .tooltip {
@@ -163,20 +198,4 @@ textarea {
 .panel:hover .tooltip {
   opacity: 1;
   visibility: visible;
-}
-
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #7F9EBA;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 30%;
-}
-
-button:hover {
-  background-color: #0056b3;
 }

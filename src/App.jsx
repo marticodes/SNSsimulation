@@ -4,8 +4,6 @@ import image2 from "./assets/2.png"
 import image3 from "./assets/3.png"
 import image4 from "./assets/4.png"
 
-
-
 import "./App.css";
 
 function PanelLV1({ onSelectionChange }) {
@@ -435,7 +433,6 @@ function App() {
           <PanelLV3 isPanel1Completed={isPanel1Completed} />
         </div>
 
-      {/* Right Sidebar */}
       <div className="right-sidebar">
           <div className="preview">
             <h3>Expected Layout</h3>
@@ -446,14 +443,18 @@ function App() {
           </div>
           <div className="new-component">
             <h3>New Component</h3>
+              <p>
+              A new component can be added to test the efficiency. Examples on new
+              components are: different types of feed, like removing the feed and
+              replacing it with another; making different persona accounts for
+              different audiences.
+            </p>
             <textarea placeholder="Explain the new feature you want to add"></textarea>
           </div>
+          <div className="simulate-button">
+          <button>Simulate</button>
         </div>
-      </div>
-
-      {/* Simulate Button */}
-      <div className="button-container">
-        <button>Simulate</button>
+        </div>
       </div>
     </div>
   );
