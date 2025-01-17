@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+import image1 from "./assets/1.png"
+import image2 from "./assets/2.png"
+import image3 from "./assets/3.png"
+import image4 from "./assets/4.png"
+
+
 
 import "./App.css";
 
@@ -432,8 +438,11 @@ function App() {
       {/* Right Sidebar */}
       <div className="right-sidebar">
           <div className="preview">
-            <h3>Preview Option</h3>
-            <p>{previewText}</p>
+            <h3>Expected Layout</h3>
+            <img
+            src = {previewText === '1' ? image1 : previewText === '2' ? image2 : previewText === '3' ? image3 : previewText === '4' ? image4 : null}
+            alt="Image Preview"
+          />
           </div>
           <div className="new-component">
             <h3>New Component</h3>

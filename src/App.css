@@ -52,19 +52,19 @@ body {
 
 .panel-header {
   display: flex;
-  align-items: center; /* Align items vertically */
-  justify-content: space-between; /* Adjust space if needed */
+  align-items: center; 
+  justify-content: space-between; 
 }
 
 .title-and-icon {
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between title and icon */
+  gap: 8px; 
 }
 
 .info-icon {
-  position: relative; /* For tooltip positioning */
-  cursor: pointer; /* Pointer to indicate interactivity */
+  position: relative; 
+  cursor: pointer; 
 }
 
 .info-icon i {
@@ -73,12 +73,12 @@ body {
 
 
 .info-icon .info-tooltip {
-  display: none; /* Hidden by default */
+  display: none;
   position: absolute;
   top: 20px;
   left: 0;
-  background-color: #000; /* Tooltip background color */
-  color: #fff; /* Tooltip text color */
+  background-color: #000;
+  color: #fff;
   padding: 5px 10px;
   border-radius: 4px;
   font-size: 12px;
@@ -87,7 +87,7 @@ body {
 }
 
 .info-icon:hover .info-tooltip {
-  display: block; /* Show tooltip on hover */
+  display: block; 
 }
 
 .options {
@@ -101,18 +101,23 @@ label {
 
 .right-sidebar {
   display: flex;
-  flex-direction: column; /* Stack the preview and new component vertically */
+  flex-direction: column;
   gap: 20px;
 }
 
-/* Preview Section */
+
 .preview {
-  flex: 1;
-  background-color: #c8f7c5;
+  background-color: #F2F2F2;
   border-radius: 8px;
   text-align: center;
   padding: 20px;
 }
+
+.preview img {
+  max-width: 100%;
+  height: auto;
+}
+
 
 /* New Component Section */
 .new-component {
