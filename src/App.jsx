@@ -1,10 +1,23 @@
 import React, { useState } from "react";
-import image1 from "./assets/1.png"
-import image2 from "./assets/2.png"
-import image3 from "./assets/3.png"
-import image4 from "./assets/4.png"
-
 import "./App.css";
+import MetaphorPrompt from "./meta-prompt";
+
+async function fetchLLMResponse(prompt) {
+  try {
+    const response = await fetch("https://your-llm-api-endpoint.com/query", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await response.json();
+    return data.result; // Adjust based on your API's response structure
+  } catch (error) {
+    console.error("Error fetching LLM response:", error);
+    return "Error connecting to the LLM.";
+  }
+}
 
 function PanelLV1({ onSelectionChange }) {
   const [selectedType, setSelectedType] = useState(null);
@@ -376,84 +389,37 @@ function PanelLV3({ isPanel1Completed, selectedConnection }) {
 }
 
 function App() {
+  const [userPrompt, setUserPrompt] = useState("");
+  const [llmResponse, setLlmResponse] = useState("");
 
-  const [isPanel1Completed, setIsPanel1Completed] = useState(false);
-  const [previewText, setPreviewText] = useState('');
-  const [type, setType] = useState(null);
-  const [order, setOrder] = useState(null);
-  const [connection, setConnection] = useState(null);
+  const handleMetaphorSubmit = async (formData) => {
+    const prompt = `Metaphor Name: ${formData.name}\n` +
+      `"In a space that feels ${formData.atmosphere}, people come together ${formData.reasonForGathering}, often connecting ${formData.connectionStyle}. They usually ${formData.durationOfParticipation}, interact through ${formData.communicationStyle}, and present themselves using ${formData.identityType}. Most people are here to ${formData.interactionGoal}, and they have the option to ${formData.participationControl}."`;
 
-  const handleSelectionChange = (panel, value) => {
-    if (panel === 'type') {
-      setType(value);
-    } else if (panel === 'order') {
-      setOrder(value);
-    } else if (panel === 'connection') {
-      setConnection(value);
-    }
-
-    // Check if all selections are made
-    if (type && order && connection) {
-      setIsPanel1Completed(true);
-    }
+    const response = await fetchLLMResponse(prompt);
+    setLlmResponse(response);
   };
-
-  const updatePreviewText = () => {
-    if (type === 'feed-based' && connection === 'network') {
-      setPreviewText('1');
-    } else if (type === 'feed-based' && connection === 'group') {
-      setPreviewText('2');
-    } else if (type === 'channel-based' && connection === 'network') {
-      setPreviewText('3');
-    } else if (type === 'channel-based' && connection === 'group') {
-      setPreviewText('4');
-    } else {
-      setPreviewText('');
-    }
-  };
-
-  // Update preview text whenever type, order, or connection change
-  React.useEffect(() => {
-    updatePreviewText();
-  }, [type, order, connection]);
 
   return (
     <div className="app-container">
-      {/* Header */}
-      <header className="header">
-        <h1>SOCIAL MEDIA SIMULATOR</h1>
-      </header>
+      <div className="left-panel">
+        <header className="header">
+          <h2>From Metaphor to SNS</h2>
+        </header>
 
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Panels */}
-        <div className="panels">
-        <PanelLV1 onSelectionChange={handleSelectionChange} />
-          <PanelLV2 isPanel1Completed={isPanel1Completed} />
-          <PanelLV3 isPanel1Completed={isPanel1Completed} />
+        <div className="chat-container">
+          <MetaphorPrompt onSubmit={handleMetaphorSubmit} />
+          <div className="chat-response">
+            <p><strong>LLM:</strong> {llmResponse || "Waiting for response..."}</p>
+          </div>
         </div>
+      </div>
 
-      <div className="right-sidebar">
-          <div className="preview">
-            <h3>Expected Layout</h3>
-            <img
-            src = {previewText === '1' ? image1 : previewText === '2' ? image2 : previewText === '3' ? image3 : previewText === '4' ? image4 : null}
-            alt="Image Preview"
-          />
-          </div>
-          <div className="new-component">
-            <h3>New Component</h3>
-              <p>
-              A new component can be added to test the efficiency. Examples on new
-              components are: different types of feed, like removing the feed and
-              replacing it with another; making different persona accounts for
-              different audiences.
-            </p>
-            <textarea placeholder="Explain the new feature you want to add"></textarea>
-          </div>
-          <div className="simulate-button">
-          <button>Simulate</button>
-        </div>
+      <div className="right-panel">
+        <div className="panels-container">
+          <PanelLV1 />
+          <PanelLV2/>
+          <PanelLV3 />
         </div>
       </div>
     </div>
@@ -461,4 +427,3 @@ function App() {
 }
 
 export default App;
-
