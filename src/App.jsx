@@ -390,14 +390,47 @@ function PanelLV3({ isPanel1Completed, selectedConnection }) {
 
 function App() {
   const [userPrompt, setUserPrompt] = useState("");
+  const [sessionId, setSessionId] = useState(null);
   const [llmResponse, setLlmResponse] = useState("");
+  const [step, setStep] = useState(1);
 
-  const handleMetaphorSubmit = async (formData) => {
-    const prompt = `Metaphor Name: ${formData.name}\n` +
-      `"In a space that feels ${formData.atmosphere}, people come together ${formData.reasonForGathering}, often connecting ${formData.connectionStyle}. They usually ${formData.durationOfParticipation}, interact through ${formData.communicationStyle}, and present themselves using ${formData.identityType}. Most people are here to ${formData.interactionGoal}, and they have the option to ${formData.participationControl}."`;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const response = await fetchLLMResponse(prompt);
-    setLlmResponse(response);
+    try {
+      const response = await fetch("http://localhost:5001/api/llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: sessionId || `${Date.now()}`, // Generate a session ID if not already set
+          step,
+          input: userPrompt,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (step === 1) {
+        setLlmResponse(data.description);
+        setSessionId(`${Date.now()}`);
+        setStep(2);
+      } else if (step === 2) {
+        setLlmResponse(data.attributes);
+        setStep(3);
+      } else if (step === 3) {
+        setLlmResponse(data.features);
+        setStep(1); // Reset for a new session
+        setSessionId(null);
+        setUserPrompt("");
+      }
+    } catch (error) {
+      console.error("Failed to fetch LLM response:", error);
+      setLlmResponse("An error occurred while processing your request.");
+    }
   };
 
   return (
@@ -408,9 +441,23 @@ function App() {
         </header>
 
         <div className="chat-container">
-          <MetaphorPrompt onSubmit={handleMetaphorSubmit} />
+          <form onSubmit={handleSubmit} className="chat-form">
+            <label htmlFor="userPrompt">Enter your metaphor keyword:</label>
+            <input
+              id="userPrompt"
+              type="text"
+              value={userPrompt}
+              onChange={(e) => setUserPrompt(e.target.value)}
+              placeholder="e.g., 'a bustling marketplace'"
+              required
+            />
+            <button type="submit">Submit</button>
+          </form>
+
           <div className="chat-response">
-            <p><strong>LLM:</strong> {llmResponse || "Waiting for response..."}</p>
+            <p>
+              <strong>LLM Response:</strong> {llmResponse || "Waiting for response..."}
+            </p>
           </div>
         </div>
       </div>
