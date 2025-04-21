@@ -1,10 +1,23 @@
 import React, { useState } from "react";
-import image1 from "./assets/1.png"
-import image2 from "./assets/2.png"
-import image3 from "./assets/3.png"
-import image4 from "./assets/4.png"
-
 import "./App.css";
+import MetaphorPrompt from "./ver4";
+
+async function fetchLLMResponse(prompt) {
+  try {
+    const response = await fetch("https://your-llm-api-endpoint.com/query", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await response.json();
+    return data.result; // Adjust based on your API's response structure
+  } catch (error) {
+    console.error("Error fetching LLM response:", error);
+    return "Error connecting to the LLM.";
+  }
+}
 
 function PanelLV1({ onSelectionChange }) {
   const [selectedType, setSelectedType] = useState(null);
@@ -376,89 +389,103 @@ function PanelLV3({ isPanel1Completed, selectedConnection }) {
 }
 
 function App() {
+  const [selections, setSelections] = useState({
+    type: null,
+    order: null,
+    connection: null,
+  });
+  const [llmResponse, setLlmResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [isPanel1Completed, setIsPanel1Completed] = useState(false);
-  const [previewText, setPreviewText] = useState('');
-  const [type, setType] = useState(null);
-  const [order, setOrder] = useState(null);
-  const [connection, setConnection] = useState(null);
-
-  const handleSelectionChange = (panel, value) => {
-    if (panel === 'type') {
-      setType(value);
-    } else if (panel === 'order') {
-      setOrder(value);
-    } else if (panel === 'connection') {
-      setConnection(value);
-    }
-
-    // Check if all selections are made
-    if (type && order && connection) {
-      setIsPanel1Completed(true);
-    }
+  const handleSelectionChange = (key, value) => {
+    setSelections(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
 
-  const updatePreviewText = () => {
-    if (type === 'feed-based' && connection === 'network') {
-      setPreviewText('1');
-    } else if (type === 'feed-based' && connection === 'group') {
-      setPreviewText('2');
-    } else if (type === 'channel-based' && connection === 'network') {
-      setPreviewText('3');
-    } else if (type === 'channel-based' && connection === 'group') {
-      setPreviewText('4');
-    } else {
-      setPreviewText('');
+  const handleMetaphorSubmit = async (formData) => {
+    setIsLoading(true);
+    try {
+      // Create a formatted description from the form data
+      const description = `In a space that feels ${formData.atmosphere}, people come together ${formData.reasonForGathering}, often connecting ${formData.connectionStyle}. They usually ${formData.durationOfParticipation}, interact through ${formData.communicationStyle}, and present themselves using ${formData.identityType}. Most people are here to ${formData.interactionGoal}, and they have the option to ${formData.participationControl}.`;
+
+      console.log("Sending to step 2:", { description, metaphorKeyword: formData.metaphorKeyword });
+
+      // Step 2: Convert description to attributes
+      const step2Response = await fetch("http://localhost:5001/api/llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          step: 2,
+          input: {
+            description,
+            metaphorKeyword: formData.metaphorKeyword
+          },
+          sessionId: Date.now().toString()
+        }),
+      });
+
+      if (!step2Response.ok) {
+        const errorText = await step2Response.text();
+        throw new Error(`Error in step 2: ${step2Response.statusText}. Details: ${errorText}`);
+      }
+
+      const step2Data = await step2Response.json();
+      console.log("Step 2 response:", step2Data);
+      
+      // Step 3: Convert attributes to features
+      const step3Response = await fetch("http://localhost:5001/api/llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          step: 3,
+          input: step2Data.attributes,
+          sessionId: Date.now().toString()
+        }),
+      });
+
+      if (!step3Response.ok) {
+        const errorText = await step3Response.text();
+        throw new Error(`Error in step 3: ${step3Response.statusText}. Details: ${errorText}`);
+      }
+
+      const step3Data = await step3Response.json();
+      console.log("Step 3 response:", step3Data);
+      setLlmResponse(step3Data.features);
+    } catch (error) {
+      console.error("Failed to process metaphor:", error);
+      setLlmResponse(`An error occurred while processing your metaphor: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // Update preview text whenever type, order, or connection change
-  React.useEffect(() => {
-    updatePreviewText();
-  }, [type, order, connection]);
 
   return (
-    <div className="app-container">
-      {/* Header */}
-      <header className="header">
-        <h1>SOCIAL MEDIA SIMULATOR</h1>
+    <div className="App">
+      <header className="App-header">
+        <h1>SNS Simulation</h1>
       </header>
-
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Panels */}
-        <div className="panels">
-        <PanelLV1 onSelectionChange={handleSelectionChange} />
-          <PanelLV2 isPanel1Completed={isPanel1Completed} />
-          <PanelLV3 isPanel1Completed={isPanel1Completed} />
+      <main>
+        <div className="metaphor-section">
+          <MetaphorPrompt onSubmit={handleMetaphorSubmit} />
+          {isLoading && (
+            <div className="loading-message">
+              Processing your metaphor...
+            </div>
+          )}
+          {llmResponse && (
+            <div className="llm-response">
+              <h3>Generated Features:</h3>
+              <div className="response-content">
+                {llmResponse}
+              </div>
+            </div>
+          )}
         </div>
-
-      <div className="right-sidebar">
-          <div className="preview">
-            <h3>Expected Layout</h3>
-            <img
-            src = {previewText === '1' ? image1 : previewText === '2' ? image2 : previewText === '3' ? image3 : previewText === '4' ? image4 : null}
-            alt="Image Preview"
-          />
-          </div>
-          <div className="new-component">
-            <h3>New Component</h3>
-              <p>
-              A new component can be added to test the efficiency. Examples on new
-              components are: different types of feed, like removing the feed and
-              replacing it with another; making different persona accounts for
-              different audiences.
-            </p>
-            <textarea placeholder="Explain the new feature you want to add"></textarea>
-          </div>
-          <div className="simulate-button">
-          <button>Simulate</button>
-        </div>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }
 
 export default App;
-
