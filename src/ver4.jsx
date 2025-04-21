@@ -3,6 +3,7 @@ import "./ver4.css";
 
 const MetaphorPrompt = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
+    metaphorKeyword: "",
     atmosphere: "",
     reasonForGathering: "",
     connectionStyle: "",
@@ -26,7 +27,20 @@ const MetaphorPrompt = ({ onSubmit }) => {
   return (
     <div className="metaphor-prompt-container">
       <form onSubmit={handleSubmit} className="metaphor-form">
-        <h3>Metaphor Description</h3>
+        <h3>Metaphor Input</h3>
+        <div className="metaphor-keyword">
+          <label htmlFor="metaphorKeyword">Metaphor Keyword:</label>
+          <input
+            type="text"
+            id="metaphorKeyword"
+            name="metaphorKeyword"
+            value={formData.metaphorKeyword}
+            onChange={handleChange}
+            placeholder="Enter your metaphor keyword"
+            className="input-blank"
+          />
+        </div>
+        <h4>Metaphor Description</h4>
         <p>
           In a space that feels 
           <input 

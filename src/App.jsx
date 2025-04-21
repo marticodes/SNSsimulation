@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import MetaphorPrompt from "./meta-prompt";
+import MetaphorPrompt from "./ver4";
 
 async function fetchLLMResponse(prompt) {
   try {
@@ -389,86 +389,101 @@ function PanelLV3({ isPanel1Completed, selectedConnection }) {
 }
 
 function App() {
-  const [userPrompt, setUserPrompt] = useState("");
-  const [sessionId, setSessionId] = useState(null);
+  const [selections, setSelections] = useState({
+    type: null,
+    order: null,
+    connection: null,
+  });
   const [llmResponse, setLlmResponse] = useState("");
-  const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSelectionChange = (key, value) => {
+    setSelections(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
 
+  const handleMetaphorSubmit = async (formData) => {
+    setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5001/api/llm", {
+      // Create a formatted description from the form data
+      const description = `In a space that feels ${formData.atmosphere}, people come together ${formData.reasonForGathering}, often connecting ${formData.connectionStyle}. They usually ${formData.durationOfParticipation}, interact through ${formData.communicationStyle}, and present themselves using ${formData.identityType}. Most people are here to ${formData.interactionGoal}, and they have the option to ${formData.participationControl}.`;
+
+      console.log("Sending to step 2:", { description, metaphorKeyword: formData.metaphorKeyword });
+
+      // Step 2: Convert description to attributes
+      const step2Response = await fetch("http://localhost:5001/api/llm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sessionId: sessionId || `${Date.now()}`, // Generate a session ID if not already set
-          step,
-          input: userPrompt,
+          step: 2,
+          input: {
+            description,
+            metaphorKeyword: formData.metaphorKeyword
+          },
+          sessionId: Date.now().toString()
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+      if (!step2Response.ok) {
+        const errorText = await step2Response.text();
+        throw new Error(`Error in step 2: ${step2Response.statusText}. Details: ${errorText}`);
       }
 
-      const data = await response.json();
+      const step2Data = await step2Response.json();
+      console.log("Step 2 response:", step2Data);
+      
+      // Step 3: Convert attributes to features
+      const step3Response = await fetch("http://localhost:5001/api/llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          step: 3,
+          input: step2Data.attributes,
+          sessionId: Date.now().toString()
+        }),
+      });
 
-      if (step === 1) {
-        setLlmResponse(data.description);
-        setSessionId(`${Date.now()}`);
-        setStep(2);
-      } else if (step === 2) {
-        setLlmResponse(data.attributes);
-        setStep(3);
-      } else if (step === 3) {
-        setLlmResponse(data.features);
-        setStep(1); // Reset for a new session
-        setSessionId(null);
-        setUserPrompt("");
+      if (!step3Response.ok) {
+        const errorText = await step3Response.text();
+        throw new Error(`Error in step 3: ${step3Response.statusText}. Details: ${errorText}`);
       }
+
+      const step3Data = await step3Response.json();
+      console.log("Step 3 response:", step3Data);
+      setLlmResponse(step3Data.features);
     } catch (error) {
-      console.error("Failed to fetch LLM response:", error);
-      setLlmResponse("An error occurred while processing your request.");
+      console.error("Failed to process metaphor:", error);
+      setLlmResponse(`An error occurred while processing your metaphor: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="app-container">
-      <div className="left-panel">
-        <header className="header">
-          <h2>From Metaphor to SNS</h2>
-        </header>
-
-        <div className="chat-container">
-          <form onSubmit={handleSubmit} className="chat-form">
-            <label htmlFor="userPrompt">Enter your metaphor keyword:</label>
-            <input
-              id="userPrompt"
-              type="text"
-              value={userPrompt}
-              onChange={(e) => setUserPrompt(e.target.value)}
-              placeholder="e.g., 'a bustling marketplace'"
-              required
-            />
-            <button type="submit">Submit</button>
-          </form>
-
-          <div className="chat-response">
-            <p>
-              <strong>LLM Response:</strong> {llmResponse || "Waiting for response..."}
-            </p>
-          </div>
+    <div className="App">
+      <header className="App-header">
+        <h1>SNS Simulation</h1>
+      </header>
+      <main>
+        <div className="metaphor-section">
+          <MetaphorPrompt onSubmit={handleMetaphorSubmit} />
+          {isLoading && (
+            <div className="loading-message">
+              Processing your metaphor...
+            </div>
+          )}
+          {llmResponse && (
+            <div className="llm-response">
+              <h3>Generated Features:</h3>
+              <div className="response-content">
+                {llmResponse}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="right-panel">
-        <div className="panels-container">
-          <PanelLV1 />
-          <PanelLV2/>
-          <PanelLV3 />
-        </div>
-      </div>
+      </main>
     </div>
   );
 }

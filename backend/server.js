@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { OpenAI } from "openai"; // Updated to correct import
+import { OpenAI } from "openai";
 
 dotenv.config();
 
@@ -26,23 +26,16 @@ app.post("/api/llm", async (req, res) => {
   }
 
   try {
-    if (step === 1) {
-      // Step 1: Generate Metaphor Description
-      const description = await generateMetaphorDescription(input);
-      sessions.set(sessionId, { step: 1, description });
-      return res.json({ description });
-    } else if (step === 2) {
+    if (step === 2) {
       // Step 2: Convert Description to Key Attributes
-      const { description } = sessions.get(sessionId) || {};
-      if (!description) return res.status(400).json({ error: "Session data not found." });
-
-      const attributes = await generateKeyAttributes(description);
+      console.log("Received input for step 2:", input);
+      const attributes = await generateKeyAttributes(input.description, input.metaphorKeyword);
       sessions.set(sessionId, { step: 2, attributes });
       return res.json({ attributes });
     } else if (step === 3) {
       // Step 3: Convert Attributes to Social Media Features
-      const { attributes } = sessions.get(sessionId) || {};
-      if (!attributes) return res.status(400).json({ error: "Session data not found." });
+      const attributes = input; // Direct input from step 2
+      if (!attributes) return res.status(400).json({ error: "Attributes data not found." });
 
       const features = await generateSocialMediaFeatures(attributes);
       sessions.delete(sessionId);
@@ -52,52 +45,58 @@ app.post("/api/llm", async (req, res) => {
     }
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Failed to process the request." });
+    res.status(500).json({ error: "Failed to process the request: " + error.message });
   }
 });
 
-// Function to generate metaphor description
-async function generateMetaphorDescription(metaphorInput) {
+async function generateKeyAttributes(description, metaphorKeyword) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4",
       messages: [
-        { role: "system", content: "You are an assistant that generates metaphor descriptions." },
-        { role: "user", content: `This is the metaphor of social media that I want to create: ${metaphorInput}` },
-        { role: "user", content: `Could you generate a metaphor description that fits into this template? 
-        Metaphor Description (fill in the blanks):
-        “In a space that feels [atmosphere], people come together [reason for gathering], often connecting [connection style]. 
-        They usually [duration of participation], interact through [communication style], and present themselves using [identity type]. 
-        Most people are here to [interaction goal], and they have the option to [control over participation/visibility].”` },
+        { 
+          role: "system", 
+          content: "You are an assistant that converts metaphor descriptions into key attributes. Always respond in valid JSON format."
+        },
+        { 
+          role: "user", 
+          content: `Given the metaphor keyword "${metaphorKeyword}" and this metaphor description: "${description}", 
+          analyze it based on these attributes and return ONLY a JSON object with the following structure:
+          {
+            "Atmosphere": "...",
+            "GatheringType": "...",
+            "ConnectingEnvironment": "...",
+            "TemporalEngagement": "...",
+            "CommunicationFlow": "...",
+            "ActorType": "...",
+            "ContentOrientation": "...",
+            "ParticipationControl": "..."
+          }
+
+          Consider these definitions when analyzing:
+          - Atmosphere: emotional and sensory qualities of the space
+          - GatheringType: reason people come together (thematic or relation-based)
+          - ConnectingEnvironment: how the space facilitates connections
+          - TemporalEngagement: duration and frequency of participation
+          - CommunicationFlow: interaction style and patterns
+          - ActorType: type of social identity individuals adopt
+          - ContentOrientation: dominant focus of communication
+          - ParticipationControl: extent of visibility and interaction management
+
+          Return ONLY the JSON object, no additional text or explanation.`
+        }
       ],
     });
-    
-    // Log the full response for debugging
-    console.log("Metaphor Description API Response:", completion);
 
-    return completion.choices[0]?.message.content;
-  } catch (error) {
-    console.error("Error in generateMetaphorDescription:", error);
-    throw error;  // Ensure errors are passed to the caller
-  }
-}
+    console.log("Key Attributes API Response:", completion.choices[0]?.message.content);
 
-async function generateKeyAttributes(description) {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are an assistant that converts metaphor descriptions into key attributes." },
-        { role: "user", content: `Could you convert this metaphor description into these following key attributes? 
-        Atmosphere, Gathering Type, Connecting Environment, Temporal Engagement, Communication Flow, 
-        Actor Type, Content Orientation, Participation Control. Description: ${description}` },
-      ],
-    });
-
-    // Log the full response for debugging
-    console.log("Key Attributes API Response:", completion);
-
-    return JSON.parse(completion.choices[0]?.message.content || "{}");
+    try {
+      const jsonResponse = JSON.parse(completion.choices[0]?.message.content || "{}");
+      return jsonResponse;
+    } catch (parseError) {
+      console.error("Error parsing JSON response:", parseError);
+      throw new Error("Failed to parse GPT response as JSON. Raw response: " + completion.choices[0]?.message.content);
+    }
   } catch (error) {
     console.error("Error in generateKeyAttributes:", error);
     throw error;
@@ -107,18 +106,45 @@ async function generateKeyAttributes(description) {
 async function generateSocialMediaFeatures(attributes) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4",
       messages: [
-        { role: "system", content: "You are an assistant that maps key attributes into social media features." },
-        { role: "user", content: `Could you convert these attributes into the social media features format? 
-        Key Attributes: ${JSON.stringify(attributes)}` },
+        { 
+          role: "system", 
+          content: "You are an assistant that maps key attributes into social media features. Format your response as a structured list with clear categories and bullet points."
+        },
+        { 
+          role: "user", 
+          content: `Based on these attributes: ${JSON.stringify(attributes)}, 
+          provide social media features organized in the following format:
+
+          LV1: Network Structure
+          - Timeline: [Feed-based or Chat-based]
+          - Connection Type: [Network-based or Group-based]
+
+          LV2: Interaction Mechanisms
+          - Content Type: [Text/Image/Both]
+          - Commenting: [Flat/Nested]
+          - Account: [Public/Private (one-way or mutual)]
+          - Identity: [Real-name/Pseudonymous/Anonymous]
+          - Messaging: [Details about 1:1/Group, Content types, Control, Audience]
+
+          LV3: Advanced Features & Customization
+          - Sharing: [Direct/Private]
+          - Reactions: [Like/Upvote-Downvote/Expanded]
+          - Ephemerality: [Content type + preview + audience settings]
+          - Visibility: [Public/Specific groups/Private]
+          - Discovery: [Topic-based/Popularity-based + Custom filters]
+          - Networking control: [Block/Mute/Hide]
+          - Privacy default: [Show all/Invite-only]
+          - Community type: [Open/Closed groups]
+
+          Make clear, specific choices based on the attributes provided.`
+        }
       ],
     });
 
-    // Log the full response for debugging
-    console.log("Social Media Features API Response:", completion);
-
-    return JSON.parse(completion.choices[0]?.message.content || "{}");
+    console.log("Social Media Features API Response:", completion.choices[0]?.message.content);
+    return completion.choices[0]?.message.content;
   } catch (error) {
     console.error("Error in generateSocialMediaFeatures:", error);
     throw error;

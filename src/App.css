@@ -1,16 +1,152 @@
-body {
-  font-family: Arial, sans-serif;
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, sans-serif;
   background-color: #eef5ff;
   color: #000000;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
 }
 
+.App {
+  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.App-header {
+  padding: 20px;
+  color: rgb(0, 0, 0);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 30px;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.metaphor-section {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.panels-section {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.panel {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.panel.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title-and-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-icon {
+  position: relative;
+  cursor: help;
+}
+
+.info-tooltip {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.info-icon:hover .info-tooltip {
+  visibility: visible;
+}
+
+.options {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.options label {
+  display: block;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.options input[type="radio"],
+.options input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+@media (max-width: 1200px) {
+  .panels-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .panel {
+    width: 100%;
+    max-width: 800px;
+  }
+}
 
 .app-container {
   width: 90%;
@@ -182,6 +318,41 @@ body {
 .info-icon:hover .info-tooltip {
   visibility: visible;
   opacity: 1;
+}
+
+.loading-message {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #e8f4ff;
+  border-radius: 8px;
+  color: #0056b3;
+  font-style: italic;
+}
+
+.llm-response {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.llm-response h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.response-content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: #444;
+  font-size: 1em;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
 }
 
 
