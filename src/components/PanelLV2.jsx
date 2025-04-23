@@ -6,10 +6,6 @@ function PanelLV2() {
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV2</h3>
-          <div className="info-icon">
-            <span className="info-tooltip">LV2 is about.....</span>
-            <i className="fas fa-info-circle"></i>
-          </div>
         </div>
       </div>
 

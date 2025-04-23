@@ -25,10 +25,6 @@ function PanelLV1({ onSelectionChange }) {
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV1</h3>
-          <div className="info-icon">
-            <span className="info-tooltip">LV0 is about... ADD</span>
-            <i className="fas fa-info-circle"></i>
-          </div>
         </div>
       </div>
       <h3>Timeline</h3>

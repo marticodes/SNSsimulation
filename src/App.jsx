@@ -108,14 +108,12 @@ function App() {
               Processing your metaphor...
             </div>
           )}
-          {llmResponse && (
-            <div className="llm-response">
-              <h3>Generated Features:</h3>
+        </div>
+        <div className="llm-response">
+              <h3>Generated Response:</h3>
               <div className="response-content">
                 {llmResponse}
               </div>
-            </div>
-          )}
         </div>
         <div className="panels-container">
           <PanelLV1 onSelectionChange={handleSelectionChange} />

@@ -6,10 +6,6 @@ function PanelLV3({ selectedConnection }) {
       <div className="panel-header">
         <div className="title-and-icon">
           <h3>LV3</h3>
-          <div className="info-icon">
-            <span className="info-tooltip">L3 is about...</span>
-            <i className="fas fa-info-circle"></i>
-          </div>
         </div>
       </div>
 
